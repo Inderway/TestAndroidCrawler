@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">爬虫</string>
+    <string name="company">company</string>
+    <string name="time">time</string>
+    <string name="address">address</string>
+    <string name="lastPage">上一页</string>
+    <string name="currentPage">当前页</string>
+    <string name="nextPage">下一页</string>
 </resources>

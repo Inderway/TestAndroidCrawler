@@ -36,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/colorPrimary"
                 android:padding="5dp"
-                android:text="上一页"
+                android:text="@string/lastPage"
                 android:textColor="#fff"
                 android:gravity="center"
                 />
@@ -48,7 +48,7 @@
                 android:layout_marginTop="5dp"
                 android:background="@color/colorPrimary"
                 android:padding="5dp"
-                android:text="当前页"
+                android:text="@string/currentPage"
                 android:textColor="#fff"
                 android:gravity="center"
                 />
@@ -60,7 +60,7 @@
                 android:layout_marginTop="5dp"
                 android:background="@color/colorPrimary"
                 android:padding="5dp"
-                android:text="下一页"
+                android:text="@string/nextPage"
                 android:textColor="#fff"
                 android:gravity="center"
                 />

@@ -10,8 +10,8 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <TextView
-            android:text="company"
-            android:textSize="15dip"
+            android:text="@string/company"
+            android:textSize="15sp"
             android:textColor="#333333"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
@@ -26,8 +26,8 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <TextView
-            android:text="time"
-            android:textSize="15dip"
+            android:text="@string/time"
+            android:textSize="15sp"
             android:textColor="#333333"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
@@ -42,8 +42,8 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <TextView
-            android:text="address"
-            android:textSize="15dip"
+            android:text="@string/address"
+            android:textSize="15sp"
             android:textColor="#333333"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />

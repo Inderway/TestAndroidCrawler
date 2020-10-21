@@ -231,8 +231,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 } else {
                     curPage = "" + (Integer.parseInt(curPage) - 1);
 
-                    if (curPage.equals(1)) {
-                        url = "http://www.dianping.com/search/category/2/45";
+                    if (curPage.equals("1")) {
+                        url = "http://www.dianping.com/search/categ ory/2/45";
                     } else {
 
                         url = "http://www.dianping.com" + mMapList.get(Integer.parseInt(curPage) - 1).get("url").toString();
