@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -39,8 +40,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ListView info_list_view;
     private List<RadiumBean> list = new ArrayList<>();
     private ProgressDialog dialog;
-    private String url = "http://www.dianping.com/search/category/2/45";
-    private String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36";
+    private String url = "http://www.dianping.com/nanjing/ch10";
+    //private String userAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36";
+    private String userAgent ="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36";
+
+    //BindView can intead findViewById
+    //need to add jakewharton:butterknife in dependencies of build.gradle
     @BindView(R.id.tvLastPage)
     TextView tvLastPage;
 
@@ -74,11 +79,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tvNextPage.setOnClickListener(this);
     }
 
+    //create a new thread to catch data
     Runnable runnable = new Runnable() {
         @Override
         public void run() {
+            //use connect of Jsoup to get object Connection according to target url
             Connection conn = Jsoup.connect(url);
             // 修改http包中的header,伪装成浏览器进行抓取
+            //this value can be get by inputting 'about:version' in Chrome
             conn.header("User-Agent", userAgent);
             Document doc = null;
             try {
@@ -86,7 +94,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
+            if(doc==null){
+                Log.d("runnable","doc==null");
+            }
+            Log.d("runnable","before getting link");
             // 获取页数的链接
             if (firstLoad) {
                 Elements elementsPages = doc.getElementsByClass("content-wrap");
@@ -97,13 +108,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Map<String, Object> map = new HashMap<>();
                     if (element1 != null) {
                         curPage = element1.text();
+                        Log.d("runnable","element1: "+curPage);
                         map.put("page", "" + (i + 1));
                         map.put("url", url);
+                        Log.d("runnable",map.values()+"");
                         mMapList.add(map);
                     } else {
                         map.put("page", "" + (i + 1));
                         map.put("url", element.attr("href"));
                         mMapList.add(map);
+                        Log.d("runnable else",map.values()+"");
                     }
 
                 }
@@ -123,10 +137,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     img = img.substring(0, a + 4);
                 }
 
-                String radiumName = elements1.get(1).child(0).getElementsByTag("h4").text();
-                String address0 = elements1.get(1).child(2).getElementsByTag("a").get(1).text();
 
+                String radiumName = elements1.get(1).child(0).getElementsByTag("h4").text();
+                //The website has used anti-crawler
+                String address0 = elements1.get(1).child(2).getElementsByTag("a").get(1).text();
                 String address1 = elements1.get(1).child(2).getElementsByClass("addr").text();
+                Log.d("runnable",String.format("address0:%s\naddress1:%s",address0,address1));
 //                StringBuilder stringBuilder = new StringBuilder();
 //
 //                if (elements1.get(2).child(0).children().size()>0){
@@ -183,6 +199,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             dialog.setCancelable(false);
             dialog.show();
 
+
             list.clear();
             new Thread(runnable).start();  // 子线程
 
@@ -232,10 +249,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     curPage = "" + (Integer.parseInt(curPage) - 1);
 
                     if (curPage.equals("1")) {
-                        url = "http://www.dianping.com/search/categ ory/2/45";
+                        url = "http://www.dianping.com/nanjing/ch10";
                     } else {
 
-                        url = "http://www.dianping.com" + mMapList.get(Integer.parseInt(curPage) - 1).get("url").toString();
+                        url = mMapList.get(Integer.parseInt(curPage) - 1).get("url").toString();
                     }
                     switchOver();
                     tvCurrentPage.setText(curPage);
@@ -251,7 +268,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Toast.makeText(this, "末页", Toast.LENGTH_SHORT).show();
                 } else {
                     curPage = "" + (Integer.parseInt(curPage) + 1);
-                    url = "http://www.dianping.com" + mMapList.get(Integer.parseInt(curPage) - 1).get("url").toString();
+                    url = mMapList.get(Integer.parseInt(curPage) - 1).get("url").toString();
+                    Log.d("onClick",url);
                     switchOver();
                     tvCurrentPage.setText(curPage);
                 }
