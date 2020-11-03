@@ -1,9 +1,14 @@
 package bruce.chang.testandroidcrawler;
 
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -36,6 +41,7 @@ public class RadiumDetailActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         mIntent = getIntent();
         url = mIntent.getStringExtra("url");
+        Log.d("debug detail",url);
         tvTargetUrl.setText("页面跳转地址是："+url);
         WebSettings settings = wvRadiumDetail.getSettings();
         settings.setJavaScriptEnabled(true);
@@ -45,10 +51,22 @@ public class RadiumDetailActivity extends AppCompatActivity {
         wvRadiumDetail.setVerticalScrollBarEnabled(false); //垂直不显示
         wvRadiumDetail.setWebViewClient(new WebViewClient() {
 
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                view.loadUrl(url);
-                return true;
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                String murl=request.getUrl().toString();
+                if(!murl.startsWith("http")){
+//                    Log.d("debug detail","not http: "+murl);
+//                    try {
+//                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(murl));
+//                        startActivity(intent);
+//                    }catch(Exception e){
+//                        Log.d("debug detail","have no intent");
+//                    }
+                    return true;
+                }
+
+                return false;
             }
         });
 

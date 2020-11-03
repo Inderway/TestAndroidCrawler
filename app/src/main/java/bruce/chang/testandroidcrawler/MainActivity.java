@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(MainActivity.this, RadiumDetailActivity.class);
                 intent.putExtra("url", list.get(i).getTargetUrl());
+                Log.d("debug","url:"+intent.getStringExtra("url"));
                 startActivity(intent);
             }
         });
@@ -85,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         public void run() {
             //use connect of Jsoup to get object Connection according to target url
             Connection conn = Jsoup.connect(url);
+
             // 修改http包中的header,伪装成浏览器进行抓取
             //this value can be get by inputting 'about:version' in Chrome
             conn.header("User-Agent", userAgent);
@@ -124,8 +126,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             firstLoad = false;
             //获取场馆的数据
+
             Element elementDiv = doc.getElementById("shop-all-list");
+            if(elementDiv==null){
+                Log.d("debug","elementDiv is null");
+                return;
+            }
             Elements elementsUl = elementDiv.getElementsByTag("ul");
+            if(elementsUl==null){
+                Log.d("debug","elementsUl is null");
+            }
             Elements elements = elementsUl.first().getElementsByTag("li");
             for (Element element : elements) {
                 Elements elements1 = element.children();
@@ -142,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //The website has used anti-crawler
                 String address0 = elements1.get(1).child(2).getElementsByTag("a").get(1).text();
                 String address1 = elements1.get(1).child(2).getElementsByClass("addr").text();
-                Log.d("runnable",String.format("address0:%s\naddress1:%s",address0,address1));
+                Log.d("runnable", String.format("address0:%s\naddress1:%s", address0, address1));
 //                StringBuilder stringBuilder = new StringBuilder();
 //
 //                if (elements1.get(2).child(0).children().size()>0){
@@ -157,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                    stringBuilder.append(youhui+"+++");
 //                }
                 RadiumBean radiumBean = new RadiumBean();
-                radiumBean.setTargetUrl("http://www.dianping.com" + targetUrl);
+                radiumBean.setTargetUrl(targetUrl);
                 radiumBean.setImg(img);
                 radiumBean.setName(radiumName);
                 radiumBean.setAddress(address0 + " " + address1);
@@ -196,13 +206,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // 显示“正在加载”窗口
             dialog = new ProgressDialog(this);
             dialog.setMessage("正在抓取数据...");
-            dialog.setCancelable(false);
+            dialog.setCancelable(true);
             dialog.show();
 
 
             list.clear();
-            new Thread(runnable).start();  // 子线程
-
+            try {
+                new Thread(runnable).start();  // 子线程
+            }catch(Exception e){
+                Log.d("debug","switch over bug");
+            }
         } else {
             // 弹出提示框
             new AlertDialog.Builder(this)
